@@ -20,15 +20,37 @@ main#app{
     display: flex;
     justify-content: center;
     flex-direction: column;
-    width: 50%;
     height: 100%;
     align-self: center;
     justify-content: space-evenly;
-    input{
+    #sendButton{
+        width: max-content; 
+        align-self: center;
+    }
+}
+
+div#chat{
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(211, 211, 211, 0.322);
+    h3{
         text-align: center;
     }
-    #sendButton{
-        width: 25%; 
-        align-self: center;
+    select{
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        height: max-content;
+        align-items: center;
+        bottom: 0;
+        max-width: 200px;
+        option{
+            max-width: 60vw;
+        }
     }
 }

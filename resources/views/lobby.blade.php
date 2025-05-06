@@ -10,11 +10,15 @@
     <body>
         <h1>Welcome to RISK!</h1>
         <main id="app">
-            <select id="onlineUsers"><option value="">Select a user</option></select>
+            
             <div id="messages"></div>
             <div id="chat">
-                <input autocomplete="off" type="text" id="messageInput" placeholder="Enter your message">
-                <button id="sendButton" onclick="sendMessage()">Send</button>
+                <div id="messageText">
+                    <h3>Chat</h3>
+                    <input autocomplete="off" type="text" id="messageInput" placeholder="Enter your message">
+                    <button id="sendButton" onclick="sendMessage()">Send</button>
+                </div>
+                <select id="onlineUsers"><option value="">Select a user</option></select>
             </div>
         </main>
     </body>

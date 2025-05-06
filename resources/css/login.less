@@ -1,0 +1,58 @@
+html{
+    width: 100vw;
+    height: 100vh;
+}
+
+h1{
+    text-align: center;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    main{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        form{
+            align-self: center;
+            position: relative;
+            padding: 5vh 5vw;
+            height: 50vh;
+            border: 1px solid black;
+            border-radius: 20%;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            .userInfo{
+                height: 30%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+            }
+            #sub-but{
+                width: max-content;
+                align-self: center;
+                position: relative;
+                bottom: 0;
+            }
+        }
+    }
+    
+}
+
+a{
+    margin-top: 2vh;
+    align-self: center;
+}
+
+p{
+    margin: 0;
+    height: max-content;
+}
+
+#errorMessages{
+    color: red;
+}
