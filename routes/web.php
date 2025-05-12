@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/chat', function () {
+Route::get('/lobby', function () {
     return view('lobby');
 });
 Route::get('/login', function () {
