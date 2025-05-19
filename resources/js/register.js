@@ -1,43 +1,118 @@
-document.addEventListener('DOMContentLoaded',f_main);
+import { ws } from './common.js';
+
+document.addEventListener('DOMContentLoaded', f_main);
 
 const regExUser = /[a-zA-Z][a-z]+/;
-const regExPass = /^\w{8}\w*/
+const regExPass = /^\w\w*/
 
-function f_main(){
+ws.onopen = () => {
+    ws.send(JSON.stringify({
+      action: "authenticate",
+      token: localStorage.getItem('token'),
+    }));
+    console.log('WebSocket connection opened and authentication token sent.');
+};
+
+function displayErrorMessage(message) {
+    const errorMessagesDiv = document.getElementById('errorMessages');
+    if (errorMessagesDiv) {
+        errorMessagesDiv.textContent = message;
+        errorMessagesDiv.style.color = "red";
+    } else {
+        console.error('Element with ID "errorMessages" not found to display error.');
+    }
+}
+
+function f_main() {
     let form = document.forms[0];
+    form.addEventListener('submit', checkForm);
 
-    form.addEventListener('submit',checkForm);
+    ws.onopen = () => {
+        console.log('WebSocket connection established with Ratchet server');
+        const errorMessagesDiv = document.getElementById('errorMessages');
+        if (errorMessagesDiv) {
+            errorMessagesDiv.textContent = "Successfully connected to the server!";
+            errorMessagesDiv.style.color = "green";
+        }
+    };
+
+    ws.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            console.log('Received message from server (in LOGIN.js):', data);
+
+            if (data.login === 'success') {
+                console.log('Login successful!', data.message);
+                const errorMessagesDiv = document.getElementById('errorMessages');
+                if (errorMessagesDiv) {
+                    errorMessagesDiv.textContent = data.message;
+                    errorMessagesDiv.style.color = "green";
+                }
+                const token = data.token;  // Get the token from the server response
+                localStorage.setItem('token', token); // Store it
+                setTimeout(() => {
+                    window.location.href = '/lobby';
+                }, 1500);
+            } else if (data.login === 'error') {
+                console.log('Login failed:', data.message);
+                displayErrorMessage(data.message);
+            }
+             else if (data.error === 'Expired token') { // Handle token expiration
+                console.warn('Token expired. Redirecting to login.');
+                localStorage.removeItem('token');  // Clear the expired token
+                displayErrorMessage('Your session has expired. Please log in again.');
+                window.location.href = '/login';    // Redirect to login
+            }
+            
+            
+        } catch (error) {
+            console.error('Error parsing ws message (in LOGIN.js):', error);
+        }
+    };
+
+    ws.onclose = () => {
+        console.log('WebSocket connection closed.');
+        const errorMessagesDiv = document.getElementById('errorMessages');
+        if (errorMessagesDiv) {
+            errorMessagesDiv.textContent = "Connection to the server lost.";
+            errorMessagesDiv.style.color = "red";
+        }
+    };
+
+    ws.onerror = (error) => {
+        console.error('ws error (from LOGIN.js):', error);
+        const errorMessagesDiv = document.getElementById('errorMessages');
+        if (errorMessagesDiv) {
+            errorMessagesDiv.textContent = "Error connecting to the server.";
+            errorMessagesDiv.style.color = "red";
+        }
+    };
 }
 
 function checkForm(e) {
     e.preventDefault();
+    let name = e.target.querySelector('#name').value;
     let user = e.target.querySelector('#uName').value;
-    let pass = e.target.querySelector('#pWord').value;
-    let pass2 = e.target.querySelector('#pWord2').value;
+    let pass = e.target.querySelector('#pWord').value
 
-    if(pass !== pass2){
-        showError("Error: Passwords do not match");
-        return;
-    }
-
-    if(user.length > 3 && pass.length > 8){
-        if(regExUser.test(user) && regExPass.test(pass)){
-            //Initial check correct, send to server.
-            alert("Ok");
-        }else{
-            showError("Error: Username or password do not meet the minimum complexity criteria");
-            return;
+    if (user.length > 3 && pass.length > 3, name.length > 3) {
+        if (regExUser.test(user) && regExPass.test(pass)) {
+            sendForms(name, user, pass);
+            console.log("Login data sent to server");
+        } else {
+            displayErrorMessage("Error: Username or password do not meet the minimum complexity criteria");
         }
-    }else{
-        showError("Error: Username or password do not meet the minimum length requirements");
-        return;
+    } else {
+        displayErrorMessage("Error: Username and password must be at least 4 characters long.");
     }
 }
 
-function showError(eMsg){
-    let errorContainer = document.querySelector('#errorMessages');
-    errorContainer.innerHTML = '';
-    let errorSpan = document.createElement('span');
-    errorSpan.textContent = eMsg;
-    errorContainer.append(errorSpan)
+function sendForms(name, user, pass) {
+    ws.send(JSON.stringify({
+        action: "register",
+        name: name,
+        login: user,
+        password: pass,
+        avatar: avatar,
+    }));
 }

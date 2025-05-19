@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', f_main);
 const regExUser = /[a-zA-Z][a-z]+/;
 const regExPass = /^\w\w*/
 
+ws.onopen = () => {
+    ws.send(JSON.stringify({
+      action: "authenticate",
+      token: localStorage.getItem('token'),
+    }));
+    console.log('WebSocket connection opened and authentication token sent.');
+};
+
 function displayErrorMessage(message) {
     const errorMessagesDiv = document.getElementById('errorMessages');
     if (errorMessagesDiv) {
@@ -43,7 +51,7 @@ function f_main() {
                 const token = data.token;  // Get the token from the server response
                 localStorage.setItem('token', token); // Store it
                 setTimeout(() => {
-                    window.location.href = '/chat';
+                    window.location.href = '/lobby';
                 }, 1500);
             } else if (data.login === 'error') {
                 console.log('Login failed:', data.message);

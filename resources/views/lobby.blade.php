@@ -4,12 +4,31 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Chat</title>
+        <title>LOBBY</title>
+        <script>
+            // Load all img urls.
+
+            const sword = "{{ asset('build/assets/sword_selectorNOBG.png') }}";
+        </script>
         @vite(['resources/css/lobby.css', 'resources/js/lobby.js', 'resources/js/lobby-dom.js'])
     </head>
     <body>
-        <h1>Welcome to RISK!</h1>
+        <h1>Welcome to <br><img src="{{ asset('build/assets/RISK_NBG.png') }}" /></h1>
         <main id="app">
+        <div id="menu">
+            <div class="b-container">
+                <button class="gbutton" tabindex="0">Start a new game</button>
+            </div>
+            <div class="b-container">
+                <button class="gbutton" tabindex="0">Browse current games</button>
+            </div>
+            <div class="b-container">
+                <button class="gbutton" tabindex="0" onclick="window.location.href=`https://www.wikihow.com/Play-Risk`">How to play</button>
+            </div>
+            <div class="b-container">
+                <button class="gbutton" id="l-out" tabindex="0">Log out</button>
+            </div>
+        </div>
             
             <div id="messages">
                 <button id="close-msg">⬆</button>

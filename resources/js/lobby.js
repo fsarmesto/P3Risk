@@ -1,23 +1,34 @@
+import {ws} from './common.js';
+
 const websocket = new WebSocket('ws://169.254.157.182:8090');
 
 console.log("WebSocket script loaded (Ratchet)");
 
-websocket.onopen = () => {
-    websocket.send(JSON.stringify({
-        action: "login", // CAMBIAR A CHECK LOCALSTORAGE
-        user: "Puru",
-        password: "1234",
-    }));
-    console.log("Test");
+ws.onopen = () => {
+    ws.send(JSON.stringify({
+        action: 'login',
+        user: 'Puru',
+        password: '1234',
+    }))
+    // ws.send(JSON.stringify({
+    //     action: "authenticate",
+    //     token: localStorage.getItem('token'),
+    // }));
+    
     console.log('WebSocket connection established with Ratchet server.');
 };
 
-websocket.onmessage = (event) => {
+ws.onmessage = (event) => {
     let svmsg = document.getElementById('messages');
     let chatlog = document.getElementById('chat-log');
     try {
         const data = JSON.parse(event.data);
         console.log('Received message from server:', data);
+        // if(data.authentication === 'error'){
+        //     setTimeout(() => {
+        //         window.location.href = '/login';
+        //     }, 5000);
+        // }
 
         if (data.online_users) {
             console.log('Online Users:', data.online_users);
@@ -72,6 +83,8 @@ websocket.onmessage = (event) => {
             chatMessageElement.style.color = "lavender";
             chatMessageElement.textContent = `${data.from_user_id}: ${data.message}`;
             chatlog.appendChild(chatMessageElement);
+        } else if(data.type === 'show_games'){
+            console.log(data.games);
         }
         // ... handle other potential message types
     } catch (error) {
@@ -80,41 +93,77 @@ websocket.onmessage = (event) => {
     }
 };
 
-websocket.onclose = () => {
+ws.onclose = () => {
     console.log('WebSocket connection with Ratchet server closed.');
     // You might want to implement reconnection logic here
     // setTimeout(() => { websocket = new WebSocket('ws://169.254.157.182:8090'); }, 5000);
 };
 
-websocket.onerror = (error) => {
+ws.onerror = (error) => {
     console.error('WebSocket error:', error);
 };
 
 window.sendMessage = function() {
+    const chatlog = document.getElementById("chat-log");
     const messages = document.getElementById("messages");
     const messageInput = document.getElementById('messageInput');
     const recipientSelect = document.getElementById('onlineUsers');
     const message = messageInput.value;
-    const recipientId = recipientSelect.value; // This will directly get the resourceId
+    const recipientId = recipientSelect.value;
 
-    if (websocket.readyState === WebSocket.OPEN && message.trim() !== '' && recipientId) {
-        websocket.send(JSON.stringify({
-            action: "message",
-            to: recipientId,
-            content: message,
-        }));
+    if (ws.readyState === WebSocket.OPEN && message.trim() !== '') {
+        if(recipientId){
+            ws.send(JSON.stringify({
+                action: "message",
+                to: recipientId,
+                content: message,
+            }));
+        }else{
+            ws.send(JSON.stringify({
+                action: "mBroadcast",
+                content: message,
+            }));
+        }
+
         messageInput.value = '';
 
         let chatMessageElement = document.createElement('span');
 
-        chatMessageElement.textContent = "Puru: " + message;
+        chatMessageElement.value = "Puru: " + message;
+
+        alert(chatlog);
+
+        chatlog.append(chatMessageElement);
 
         messages.appendChild(chatMessageElement);
         
-        console.log(`Mensaje privado enviado al Connection ID: ${recipientId}`);
-    } else if (!recipientId) {
-        alert('Please select a recipient from the online users list.');
-    } else if (message.trim() === '') {
+        //(recipientID) ? console.log(`Mensaje privado enviado al Connection ID: ${recipientId}`) : console.log(`Mensaje enviado a todos`);
+    }else if (message.trim() === '') {
         alert('Please enter a message.');
     }
 };
+
+export function cGame(ev,gameForm){
+
+    ev.preventDefault();
+
+    let gameName = gameForm.querySelector('#gameName').value;
+    let maxPlayers = gameForm.querySelector('#maxPlayers').value;
+    let gPassword = gameForm.querySelector('#token').value;
+
+    ws.send(JSON.stringify({
+        action: "gCreate",
+        name: gameName,
+        max_players: maxPlayers,
+        gPassword: gPassword,
+    }));
+
+}
+
+export function sGames(ev){
+
+    ev.preventDefault();
+    
+    ws.send(JSON.stringify({action: 'gShow'}));
+
+}

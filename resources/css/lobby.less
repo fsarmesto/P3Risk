@@ -27,7 +27,6 @@ h1{
     flex: 1;
     margin: 0 5%;
     height: auto;
-    max-height: 50px;
     overflow-y: auto;
     span{
         width: 100%;
@@ -35,12 +34,67 @@ h1{
 }
 
 main#app{
+    position: relative;
     display: flex;
-    justify-content: center;
     flex-direction: column;
     height: 100%;
+    padding-bottom: 12vh;
     align-self: center;
-    justify-content: space-evenly;
+    width: 100%;
+    align-items: center;
+    
+
+    div#menu{
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        justify-content: space-around;
+        align-items: center;
+        .b-container{
+            display: flex;
+            flex-direction: row;
+            max-height: 50px;
+            justify-content: center;
+            position: relative;
+            width: max-content;
+            &:focus{
+                transform: translateX(-20px);
+            }
+        }
+        #selector_menu{
+            border-radius: 10%;
+            flex: 0;
+            // border: 1px solid white;
+            width: 3.5vw;
+            position: absolute;
+            left: -25%;
+            transform: rotate(45deg);
+            top: 0;
+        }
+        .gbutton{
+            font-size: medium;
+            font-weight: bolder; 
+            flex: 1;
+            width: 18vw;
+            padding: 5%;
+            background-color: rgb(98, 2, 2);
+            color: rgb(216, 213, 213);
+            box-sizing: border-box;
+            position: relative;
+
+            &:focus{
+                background-color: red;
+                &::before{
+                    font-size: larger;
+                    padding: 2.5%;
+                    background: url('https://t4.ftcdn.net/jpg/06/34/24/93/360_F_634249394_8wuGxlk2s72UZTBDpKp4JW2O5R82ER4u.jpg');
+                    position: absolute;
+                    top: 0;
+                    left: -20px;
+                }
+            }
+        }
+    }
 
     div#messages {
         max-width: 20vw;
@@ -89,8 +143,11 @@ div#chat{
     bottom: 0;
     left: 0;
     background-color: rgba(211, 211, 211, 0.322);
+    align-items: stretch;
+    height: 12vh;
     h3{
         text-align: center;
+        margin: 0;
     }
     select#onlineUsers{
         position: relative;
@@ -101,5 +158,62 @@ div#chat{
         align-self: center;
         bottom: 0;
         max-width: 200px;
+    }
+}
+
+#new-game-form{
+    overflow: hidden;
+    justify-content: center;
+    padding: 2% 15%;
+    border-radius: 20%;
+    border: 1px solid black;
+    background: beige;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    div{
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+    }
+    .form-buttons{
+        margin-top: 5%;
+        height: auto;
+        width: auto;
+        display: flex;
+        flex-direction: row;
+        text-align: -webkit-auto;
+    }
+}
+
+.game-item{
+    border: 1px solid black;
+    cursor: pointer;
+    background-color: beige;
+    margin: 25px 0;
+    &:first-of-type{
+        margin-top: 0px;
+    }
+    &:last-of-type{
+        margin-bottom: 0px;
+    }
+}
+
+#game-list{
+    overflow-y: auto;
+    max-height: 170px;
+}
+
+#game-list-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    max-height: 275px;
+    #back-to-menu{
+        align-self:center;
+        margin-top: 15px;
+        width: 25%;
     }
 }
